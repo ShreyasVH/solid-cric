@@ -1,0 +1,7 @@
+# node 18.16.0 path
+export PATH=
+
+export VITE_HOST=
+export VITE_PORT=
+
+export VITE_API_ENDPOINT=
