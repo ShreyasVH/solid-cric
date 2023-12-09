@@ -2,12 +2,15 @@ import { createSignal, onMount, For } from "solid-js";
 import { Box, Grid, Typography, CardActionArea, CardContent, Card, Button } from "@suid/material";
 import { formatDateTimeString } from '../../utils';
 import { getAllYears, getToursForYear } from '../../endpoints/tours';
+import { useNavigate } from '@solidjs/router';
 
 export default function Home() {
     const [ years, setYears ] = createSignal([]);
     const [ tours, setTours ] = createSignal([]);
     const pageSize = 25;
     let currentPage = 1;
+
+    const navigate = useNavigate();
 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const selectedYear = parseInt(urlSearchParams.get('year') ?? (new Date()).getFullYear());
@@ -32,7 +35,7 @@ export default function Home() {
     });
 
     const handleTourClick = (tourId, event) => {
-        console.log(tourId);
+        navigate('/tours/detail?id=' + tourId);
     }
 
     const handleYearClick = (year, event) => {

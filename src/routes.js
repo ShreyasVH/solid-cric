@@ -1,4 +1,5 @@
 import Home from './containers/home'
+import TourDetails from './containers/tours/details';
 
 const routes = [
     {
@@ -8,6 +9,10 @@ const routes = [
     {
         path: "/browse",
         component: Home
+    },
+    {
+        path: '/tours/detail',
+        component: TourDetails
     }
 ];
 
