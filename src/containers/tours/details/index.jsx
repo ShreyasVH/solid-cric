@@ -2,12 +2,13 @@ import { createSignal, onMount, For } from "solid-js";
 import { Typography, CardActionArea, CardContent, Card } from "@suid/material";
 import { formatDateTimeString } from '../../../utils';
 import { getTour } from '../../../endpoints/tours';
-import {useSearchParams} from "@solidjs/router";
+import {useNavigate, useSearchParams} from "@solidjs/router";
 
 export default function TourDetails() {
     const [ tour, setTour ] = createSignal({});
 
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     onMount(async () => {
         const id = searchParams.id;
@@ -17,7 +18,7 @@ export default function TourDetails() {
     });
 
     const handleSeriesClick = (seriesId, event) => {
-        console.log(seriesId);
+        navigate('/series/detail?id=' + seriesId);
     }
 
     return (
