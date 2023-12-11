@@ -2,13 +2,14 @@ import { createSignal, onMount, For } from "solid-js";
 import { Typography, CardActionArea, CardContent, Card, Grid } from "@suid/material";
 import { formatDateTimeString } from '../../../utils';
 import { getSeries } from '../../../endpoints/series';
-import {useSearchParams} from "@solidjs/router";
+import { useNavigate, useSearchParams } from "@solidjs/router";
 
 export default function TourDetails() {
     const [ series, setSeries ] = createSignal({});
     const [ loaded, setLoaded ] = createSignal(false);
 
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     onMount(async () => {
         const id = searchParams.id;
@@ -19,7 +20,7 @@ export default function TourDetails() {
     });
 
     const handleMatchClick = (matchId, event) => {
-        console.log(matchId);
+        navigate('/matches/detail?id=' + matchId);
     };
 
     const renderStadiumDetails = stadium => {
