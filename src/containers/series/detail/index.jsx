@@ -1,7 +1,8 @@
 import { createSignal, onMount, For } from "solid-js";
-import { Typography, CardActionArea, CardContent, Card, Grid } from "@suid/material";
-import { formatDateTimeString } from '../../../utils';
+import { Typography, CardActionArea, CardContent, Card, Grid, Button } from "@suid/material";
+import { formatDateTimeString, copyObject } from '../../../utils';
 import { getSeries } from '../../../endpoints/series';
+import { removeMatch } from '../../../endpoints/matches';
 import { useNavigate, useSearchParams } from "@solidjs/router";
 
 export default function TourDetails() {
@@ -21,6 +22,20 @@ export default function TourDetails() {
 
     const handleMatchClick = (matchId, event) => {
         navigate('/matches/detail?id=' + matchId);
+    };
+
+    const handleDeleteMatchClick = async (matchId, event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const deleteResponse = await removeMatch(matchId);
+        if (deleteResponse.status === 200) {
+            const updatedSeries = copyObject(series());
+            updatedSeries.matches = series().matches.filter(m => m.id !== matchId);
+            setSeries(updatedSeries);
+            // TODO: add success alert snackbar
+        } else {
+            // TODO: add failure alert snackbar
+        }
     };
 
     const renderStadiumDetails = stadium => {
@@ -84,6 +99,10 @@ export default function TourDetails() {
                                             <Typography color="text.secondary" sx={{display: 'block'}}>
                                                 {renderWinner(match)}
                                             </Typography>
+
+                                            <Button color={'error'} variant={'contained'} onClick={[handleDeleteMatchClick, match.id]}>
+                                                DELETE
+                                            </Button>
                                         </Grid>
 
                                         <Grid item lg={4} sx={{textAlign: 'center'}}>
