@@ -2,3 +2,7 @@ node_modules
 .envrc
 .DS_Store
 .idea
+npmInstall.log
+compile.log
+server.log
+dist/
