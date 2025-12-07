@@ -1,0 +1,32 @@
+.sortable {
+    cursor: pointer;
+}
+
+.pagination-box {
+    text-align: center;
+    margin-top: 2%;
+}
+
+.pagination-box .active {
+    background-color: #303F9F;
+    color: #FFFFFF;
+    border: 1px solid #303F9F;
+    border-radius: 10%;
+}
+
+.pagination-button {
+    display: inline-block;
+    padding: 1% 1.5%;
+    cursor: pointer;
+    font-weight: large;
+    margin-left: 0.25%;
+    margin-right: 0.25%;
+    border-radius: 0;
+}
+
+.pagination-button:hover {
+    background-color: #303F9F;
+    color: #FFFFFF;
+    border: 1px solid #303F9F;
+    border-radius: 10%;
+}
