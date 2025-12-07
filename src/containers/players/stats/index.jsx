@@ -2,6 +2,9 @@ import Filters from '../../filters';
 import { createSignal, onMount, Show } from 'solid-js';
 import { FILTER_TYPE } from '../../../constants';
 import { getStats } from '../../../endpoints/players';
+import { getAllTeams } from '../../../endpoints/teams';
+import { getAllStadiums } from '../../../endpoints/stadiums';
+import { copyObject, showLoader, hideLoader } from '../../../utils';
 
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@suid/material';
 import './styles.css';
@@ -10,10 +13,10 @@ export default function PlayerStats() {
     const [ stats, setStats ] = createSignal([]);
     const [ totalCount, setTotalCount ] = createSignal(0);
     const [ selectedFiltersTemp, setSelectedFiltersTemp ] = createSignal({
-        type: 'fielding'
+        type: 'batting'
     });
     const [ selectedFilters, setSelectedFilters ] = createSignal({
-        type: 'fielding'
+        type: 'batting'
     });
     const [ page, setPage ] = createSignal(1);
     const [ sortMap, setSortMap ] = createSignal({
@@ -90,14 +93,46 @@ export default function PlayerStats() {
     onMount(async () => {
         Promise.all([
             updateData(1, sortMap()),
-            // getAllTeams(),
-            // getAllStadiums()
-        ]).then(([_]) => {
+            getAllTeams(),
+            getAllStadiums()
+        ]).then(([_, allTeams, allStadiums]) => {
+            const updatedFilterOptions = copyObject(filterOptions());
+
+            updatedFilterOptions['team'] = {
+                displayName: 'Team',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTeams.map(team => ({
+                    id: JSON.stringify(team.id),
+                    name: team.name
+                }))
+            };
+
+            updatedFilterOptions['opposingTeam'] = {
+                displayName: 'Opposing Team',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTeams.map(team => ({
+                    id: JSON.stringify(team.id),
+                    name: team.name
+                }))
+            };
+
+            updatedFilterOptions['stadium'] = {
+                displayName: 'Stadium',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allStadiums.map(stadium => ({
+                    id: JSON.stringify(stadium.id),
+                    name: stadium.name
+                }))
+            };
+
+            setFilterOptions(updatedFilterOptions);
 
         }).catch(error => console.log(error))
     });
 
     const updateData = (selectedPage, sortMap) => {
+        showLoader();
+
         const payload = {
             type: 'batting',
             filters: {},
@@ -164,7 +199,7 @@ export default function PlayerStats() {
             handleFilterClose();
             setPage(selectedPage);
             setSortMap(sortMap);
-            // hideLoader();
+            hideLoader();
         });
     };
 
@@ -211,6 +246,61 @@ export default function PlayerStats() {
         updateData(1, {
             [key]: order
         });
+    };
+
+    const handleFilterEvent = event => {
+        console.log(event);
+        let tempFilters = copyObject(selectedFiltersTemp());
+        console.log(tempFilters);
+        switch (event.filterType) {
+            case FILTER_TYPE.CHECKBOX: {
+                const key = event.filterKey;
+                const id = event.optionId;
+                const target = event.target;
+                const checked = target.checked;
+                console.log(checked);
+
+                if (checked) {
+                    let index = tempFilters[key].indexOf(id);
+                    tempFilters[key].splice(index, 1);
+                } else {
+                    if (tempFilters.hasOwnProperty(key)) {
+                        tempFilters[key].push(id);
+                    } else {
+                        tempFilters[key] = [
+                            id
+                        ];
+                    }
+                }
+                console.log(tempFilters);
+                break;
+            }
+            case FILTER_TYPE.RADIO: {
+                const key = event.filterKey;
+                const id = event.optionId;
+
+                tempFilters[key] = id;
+                console.log(tempFilters);
+                break;
+            }
+            case FILTER_TYPE.RANGE: {
+                const key = event.filterKey;
+                const type = event.rangeType;
+                const target = event.target;
+                if (!tempFilters.hasOwnProperty(key)) {
+                    tempFilters[key] = {};
+                }
+                tempFilters[key][type] = target.value;
+                break;
+            }
+        }
+
+        setSelectedFiltersTemp(tempFilters);
+        // console.log(selectedFiltersTemp());
+    };
+
+    const handleApplyFilters = () => {
+        updateData(1, sortMap());
     };
 
     return (
@@ -521,6 +611,9 @@ export default function PlayerStats() {
                     onFilterOpen={handleFilterOpen}
                     onFilterClose={handleFilterClose}
                     options={filterOptions()}
+                    selected={selectedFiltersTemp()}
+                    handleEvent={handleFilterEvent}
+                    applyFilters={handleApplyFilters}
                 />
             </Show>
         </>

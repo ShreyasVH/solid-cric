@@ -1,0 +1,8 @@
+.appliedFilter {
+    display: inline-block;
+    border-radius: 50%;
+    min-width: 0.625rem;
+    min-height: 0.625rem;
+    background-color: #27AE60;
+    margin-left: 0.625rem;
+}
