@@ -24,6 +24,130 @@ export default function PlayerStats() {
     });
     const limit = 10;
 
+    const columns = {
+        batting: [
+            {
+                displayKey: 'Name',
+                key: 'name',
+                sortable: false
+            },
+            {
+                displayKey: 'Innings',
+                key: 'innings',
+                sortable: true
+            },
+            {
+                displayKey: 'Runs',
+                key: 'runs',
+                sortable: true
+            },
+            {
+                displayKey: 'Balls',
+                key: 'balls',
+                sortable: true
+            },
+            {
+                displayKey: 'Not Outs',
+                key: 'notOuts',
+                sortable: true
+            },
+            {
+                displayKey: 'Highest',
+                key: 'highest',
+                sortable: true
+            },
+            {
+                displayKey: '4s',
+                key: 'fours',
+                sortable: true
+            },
+            {
+                displayKey: '6s',
+                key: 'sixes',
+                sortable: true
+            },
+            {
+                displayKey: '50s',
+                key: 'fifties',
+                sortable: true
+            },
+            {
+                displayKey: '100s',
+                key: 'hundreds',
+                sortable: true
+            }
+        ],
+        bowling: [
+            {
+                displayKey: 'Name',
+                key: 'name',
+                sortable: false
+            },
+            {
+                displayKey: 'Innings',
+                key: 'innings',
+                sortable: true
+            },
+            {
+                displayKey: 'Wickets',
+                key: 'wickets',
+                sortable: true
+            },
+            {
+                displayKey: 'Runs',
+                key: 'runs',
+                sortable: true
+            },
+            {
+                displayKey: 'Balls',
+                key: 'balls',
+                sortable: true
+            },
+            {
+                displayKey: 'Maidens',
+                key: 'maidens',
+                sortable: true
+            },
+            {
+                displayKey: 'fifers',
+                key: 'fifers',
+                sortable: true
+            },
+            {
+                displayKey: 'Ten Wickets',
+                key: 'tenWickets',
+                sortable: true
+            }
+        ],
+        fielding: [
+            {
+                displayKey: 'Name',
+                key: 'name',
+                sortable: false
+            },
+            {
+                displayKey: 'Fielder Catches',
+                key: 'fielderCatches',
+                sortable: true
+            },
+            {
+                displayKey: 'Keeper Catches',
+                key: 'keeperCatches',
+                sortable: true
+            },
+            {
+                displayKey: 'Stumpings',
+                key: 'stumpings',
+                sortable: true
+            },
+            {
+                displayKey: 'Run Outs',
+                key: 'runOuts',
+                sortable: true
+            }
+        ]
+    };
+
     const getDefaultFilterOptions = () => ({
         type: {
             displayName: 'Type',
@@ -212,7 +336,6 @@ export default function PlayerStats() {
     const [ loaded, setLoaded ] = createSignal(false);
 
     const handleFilterOpen = () => {
-        console.log('opening filters');
         setIsFilterOpen(true);
         setSelectedFiltersTemp(selectedFilters());
     }
@@ -241,24 +364,24 @@ export default function PlayerStats() {
         return sortMap().hasOwnProperty(key);
     };
 
-    const handleSort = (key) => {
-        const order = ((sortMap().hasOwnProperty(key) && sortMap()[key] === 'desc') ? 'asc' : 'desc');
-        updateData(1, {
-            [key]: order
-        });
+    const handleSort = (key, type) => {
+        const columnConfig = columns[type].filter(column => key === column.key);
+        if (columnConfig.length === 1 && columnConfig[0].sortable) {
+            const order = ((sortMap().hasOwnProperty(key) && sortMap()[key] === 'desc') ? 'asc' : 'desc');
+            updateData(1, {
+                [key]: order
+            });
+        }
     };
 
     const handleFilterEvent = event => {
-        console.log(event);
         let tempFilters = copyObject(selectedFiltersTemp());
-        console.log(tempFilters);
         switch (event.filterType) {
             case FILTER_TYPE.CHECKBOX: {
                 const key = event.filterKey;
                 const id = event.optionId;
                 const target = event.target;
                 const checked = target.checked;
-                console.log(checked);
 
                 if (checked) {
                     let index = tempFilters[key].indexOf(id);
@@ -272,7 +395,6 @@ export default function PlayerStats() {
                         ];
                     }
                 }
-                console.log(tempFilters);
                 break;
             }
             case FILTER_TYPE.RADIO: {
@@ -280,7 +402,6 @@ export default function PlayerStats() {
                 const id = event.optionId;
 
                 tempFilters[key] = id;
-                console.log(tempFilters);
                 break;
             }
             case FILTER_TYPE.RANGE: {
@@ -296,7 +417,6 @@ export default function PlayerStats() {
         }
 
         setSelectedFiltersTemp(tempFilters);
-        // console.log(selectedFiltersTemp());
     };
 
     const handleApplyFilters = () => {
@@ -306,269 +426,38 @@ export default function PlayerStats() {
     return (
         <>
             <Show when={loaded()}>
-                <Show when={selectedFilters().type === 'batting'}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{'fontWeight': '600'}}>
-                                    Player ID
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}}>
-                                    Name
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('innings')}>
-                                    Innings
-                                    <Show when={isSortActive('innings')}>
-                                        {getSortSymbol('innings')}
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            {columns[selectedFilters().type].map(column => (
+                                <TableCell
+                                    sx={{'fontWeight': '600'}}
+                                    classList={{
+                                    'sortable': column.sortable
+                                    }}
+                                    onClick={() => handleSort(column.key, selectedFilters().type)}
+                                >
+                                    {column.displayKey}
+                                    <Show when={isSortActive(column.key)}>
+                                        {getSortSymbol(column.key)}
                                     </Show>
                                 </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('runs')}>
-                                    Runs
-                                    <Show when={isSortActive('runs')}>
-                                        {getSortSymbol('runs')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('balls')}>
-                                    Balls
-                                    <Show when={isSortActive('balls')}>
-                                        {getSortSymbol('balls')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('notOuts')}>
-                                    Not Outs
-                                    <Show when={isSortActive('notOuts')}>
-                                        {getSortSymbol('notOuts')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('highest')}>
-                                    Highest
-                                    <Show when={isSortActive('highest')}>
-                                        {getSortSymbol('highest')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('fours')}>
-                                    4s
-                                    <Show when={isSortActive('fours')}>
-                                        {getSortSymbol('fours')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('sixes')}>
-                                    6s
-                                    <Show when={isSortActive('sixes')}>
-                                        {getSortSymbol('sixes')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('fifties')}>
-                                    50s
-                                    <Show when={isSortActive('fifties')}>
-                                        {getSortSymbol('fifties')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('hundreds')}>
-                                    100s
-                                    <Show when={isSortActive('hundreds')}>
-                                        {getSortSymbol('hundreds')}
-                                    </Show>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {stats().map(stat => (
-                                <TableRow>
-                                    <TableCell>
-                                        {stat.id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.innings}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.runs}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.balls}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.notOuts}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.highest}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fours}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.sixes}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fifties}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.hundreds}
-                                    </TableCell>
-                                </TableRow>
                             ))}
-                        </TableBody>
-                    </Table>
-                </Show>
+                        </TableRow>
+                    </TableHead>
 
-                <Show when={selectedFilters().type === 'bowling'}>
-                    <Table>
-                        <TableHead>
+                    <TableBody>
+                        {stats().map(stat => (
                             <TableRow>
-                                <TableCell sx={{'fontWeight': '600'}}>
-                                    Player ID
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}}>
-                                    Name
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('innings')}>
-                                    Innings
-                                    <Show when={isSortActive('innings')}>
-                                        {getSortSymbol('innings')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('wickets')}>
-                                    Wickets
-                                    <Show when={isSortActive('wickets')}>
-                                        {getSortSymbol('wickets')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('runs')}>
-                                    Runs
-                                    <Show when={isSortActive('runs')}>
-                                        {getSortSymbol('runs')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('balls')}>
-                                    Balls
-                                    <Show when={isSortActive('balls')}>
-                                        {getSortSymbol('balls')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('maidens')}>
-                                    Maidens
-                                    <Show when={isSortActive('maidens')}>
-                                        {getSortSymbol('maidens')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('fifers')}>
-                                    Fifers
-                                    <Show when={isSortActive('fifers')}>
-                                        {getSortSymbol('fifers')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('tenWickets')}>
-                                    Ten Wickets
-                                    <Show when={isSortActive('tenWickets')}>
-                                        {getSortSymbol('tenWickets')}
-                                    </Show>
-                                </TableCell>
+                                {columns[selectedFilters().type].map(column => (
+                                    <TableCell>
+                                        {stat[column.key]}
+                                    </TableCell>
+                                ))}
                             </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {stats().map(stat => (
-                                <TableRow>
-                                    <TableCell>
-                                        {stat.id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.innings}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.wickets}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.runs}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.balls}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.maidens}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fifers}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.tenWickets}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </Show>
-
-                <Show when={selectedFilters().type === 'fielding'}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{'fontWeight': '600'}}>
-                                    Player ID
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}}>
-                                    Name
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('fielderCatches')}>
-                                    Fielder Catches
-                                    <Show when={isSortActive('fielderCatches')}>
-                                        {getSortSymbol('fielderCatches')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('keeperCatches')}>
-                                    Keeper Catches
-                                    <Show when={isSortActive('keeperCatches')}>
-                                        {getSortSymbol('keeperCatches')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('stumpings')}>
-                                    Stumpings
-                                    <Show when={isSortActive('stumpings')}>
-                                        {getSortSymbol('stumpings')}
-                                    </Show>
-                                </TableCell>
-                                <TableCell sx={{'fontWeight': '600'}} class="sortable" onClick={() => handleSort('runOuts')}>
-                                    Run Outs
-                                    <Show when={isSortActive('runOuts')}>
-                                        {getSortSymbol('runOuts')}
-                                    </Show>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {stats().map(stat => (
-                                <TableRow>
-                                    <TableCell>
-                                        {stat.id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.fielderCatches}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.keeperCatches}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.stumpings}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.runOuts}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </Show>
+                        ))}
+                    </TableBody>
+                </Table>
 
                 <div class="pagination-box">
                     <Show when={page() > 2}>
