@@ -395,6 +395,9 @@ export default function PlayerStats() {
                         ];
                     }
                 }
+                if (tempFilters[key].length === 0) {
+                    delete tempFilters[key];
+                }
                 break;
             }
             case FILTER_TYPE.RADIO: {
@@ -421,6 +424,26 @@ export default function PlayerStats() {
 
     const handleApplyFilters = () => {
         updateData(1, sortMap());
+    };
+
+    const handleClearFilter = key => {
+        let tempFilters = copyObject(selectedFiltersTemp());
+
+        delete tempFilters[key];
+
+        setSelectedFiltersTemp(tempFilters);
+    };
+
+    const handleClearAllFilters = () => {
+        let tempFilters = copyObject(selectedFiltersTemp());
+
+        for (const key of Object.keys(tempFilters)) {
+            if (key !== 'type') {
+                delete tempFilters[key];
+            }
+        }
+
+        setSelectedFiltersTemp(tempFilters);
     };
 
     return (
@@ -503,6 +526,8 @@ export default function PlayerStats() {
                     selected={selectedFiltersTemp()}
                     handleEvent={handleFilterEvent}
                     applyFilters={handleApplyFilters}
+                    clearFilter={handleClearFilter}
+                    clearAllFilters={handleClearAllFilters}
                 />
             </Show>
         </>

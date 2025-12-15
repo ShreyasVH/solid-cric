@@ -49,6 +49,14 @@ export default function Filters(props) {
 
     const isFilterSelected = key => (props.selected.hasOwnProperty(key) && (0 !== props.selected[key].length));
 
+    const clearFilter = key => props.clearFilter && props.clearFilter(key);
+
+    const clearAllFilters = () => props.clearAllFilters && props.clearAllFilters();
+
+    const isAnyFilterSelected = () => {
+        return Object.keys(props.selected).filter(k => k !== 'type').length > 0
+    };
+
     return (
         <>
             <Fab color="primary" sx={{position: 'absolute', bottom: '16px', right: '16px'}} onClick={showFilters}>
@@ -70,6 +78,12 @@ export default function Filters(props) {
                         <Button autofocus color="inherit" onClick={applyFilters}>
                             apply
                         </Button>
+
+                        <Show when={isAnyFilterSelected()}>
+                            <Button autofocus color="inherit" onClick={clearAllFilters}>
+                                Clear All
+                            </Button>
+                        </Show>
                     </Toolbar>
                 </AppBar>
 
@@ -90,6 +104,17 @@ export default function Filters(props) {
                                 <div>
                                     <Show when={key === activeFilter()}>
                                         <Show when={isRadioFilter(key)}>
+                                            <Show when={key !== 'type' && isFilterSelected(key)}>
+                                                <Button
+                                                    onClick={(event) => clearFilter(key)}
+                                                    color="primary"
+                                                    sx={{float: 'right'}}
+                                                >
+                                                    <span>
+                                                        Clear
+                                                    </span>
+                                                </Button>
+                                            </Show>
                                             <FormControl>
                                                 <RadioGroup
                                                     row
@@ -113,6 +138,17 @@ export default function Filters(props) {
                                         </Show>
 
                                         <Show when={isCheckboxFilter(key)}>
+                                            <Show when={isFilterSelected(key)}>
+                                                <Button
+                                                    onClick={(event) => clearFilter(key)}
+                                                    color="primary"
+                                                    sx={{float: 'right'}}
+                                                >
+                                                    <span>
+                                                        Clear
+                                                    </span>
+                                                </Button>
+                                            </Show>
                                             <For each={filter.values}>
                                                 {(option) => (
                                                     <FormControlLabel
@@ -128,6 +164,17 @@ export default function Filters(props) {
                                         </Show>
 
                                         <Show when={isRangeFilter(key)}>
+                                            <Show when={isFilterSelected(key)}>
+                                                <Button
+                                                    onClick={(event) => clearFilter(key)}
+                                                    color="primary"
+                                                    sx={{float: 'right'}}
+                                                >
+                                                    <span>
+                                                        Clear
+                                                    </span>
+                                                </Button>
+                                            </Show>
                                             <TextField
                                                 label="From"
                                                 variant="outlined"
