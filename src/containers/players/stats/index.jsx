@@ -206,12 +206,7 @@ export default function PlayerStats() {
         year: {
             displayName: 'Year',
             type: FILTER_TYPE.RANGE
-        },
-        number: {
-            displayName: 'Position',
-            type: FILTER_TYPE.CHECKBOX,
-            values: [...Array(11).keys()].map(i => ({ id: String(i + 1), name: i + 1 }))
-        },
+        }
     });
 
     onMount(async () => {
