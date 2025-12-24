@@ -1,4 +1,5 @@
 import { Show } from "solid-js";
+import './pagination-box.css';
 
 export default function PaginationBox(props) {
     const page = props.page;
