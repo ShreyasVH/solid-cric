@@ -6,11 +6,73 @@ import { getAllTeams } from '../../../endpoints/teams';
 import { getAllStadiums } from '../../../endpoints/stadiums';
 import { copyObject, showLoader, hideLoader } from '../../../utils';
 import PaginationBox from './paginationBox';
-
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@suid/material';
-import './styles.css';
+import StatsTable from './statsTable';
 
 export default function PlayerStats() {
+    const getDefaultFilterOptions = () => ({
+        type: {
+            displayName: 'Type',
+            type: FILTER_TYPE.RADIO,
+            values: [
+                {
+                    id: 'batting',
+                    name: 'Batting'
+                },
+                {
+                    id: 'bowling',
+                    name: 'Bowling'
+                },
+                {
+                    id: 'fielding',
+                    name: 'Fielding'
+                }
+            ]
+        },
+        gameType: {
+            displayName: 'Game Type',
+            type: FILTER_TYPE.CHECKBOX,
+            values: [
+                {
+                    id: '1',
+                    name: 'ODI'
+                },
+                {
+                    id: '2',
+                    name: 'TEST'
+                },
+                {
+                    id: '3',
+                    name: 'T20'
+                }
+            ]
+        },
+        teamType: {
+            displayName: 'Team Type',
+            type: FILTER_TYPE.CHECKBOX,
+            values: [
+                {
+                    id: '1',
+                    name: 'INTERNATIONAL'
+                },
+                {
+                    id: '2',
+                    name: 'DOMESTIC'
+                },
+                {
+                    id: '3',
+                    name: 'FRANCHISE'
+                }
+            ]
+        },
+        year: {
+            displayName: 'Year',
+            type: FILTER_TYPE.RANGE
+        }
+    });
+
+    const [ loaded, setLoaded ] = createSignal(false);
+    const [ isFilterOpen, setIsFilterOpen ] = createSignal(false);
+    const [ filterOptions, setFilterOptions ] = createSignal(getDefaultFilterOptions());
     const [ stats, setStats ] = createSignal([]);
     const [ totalCount, setTotalCount ] = createSignal(0);
     const [ selectedFiltersTemp, setSelectedFiltersTemp ] = createSignal({
@@ -19,12 +81,12 @@ export default function PlayerStats() {
     const [ selectedFilters, setSelectedFilters ] = createSignal({
         type: 'batting'
     });
-    const [ page, setPage ] = createSignal(1);
     const [ sortMap, setSortMap ] = createSignal({
         runs: 'desc'
     });
-    const limit = 10;
+    const [ page, setPage ] = createSignal(1);
 
+    const limit = 10;
     const columns = {
         batting: [
             {
@@ -149,68 +211,7 @@ export default function PlayerStats() {
         ]
     };
 
-    const getDefaultFilterOptions = () => ({
-        type: {
-            displayName: 'Type',
-            type: FILTER_TYPE.RADIO,
-            values: [
-                {
-                    id: 'batting',
-                    name: 'Batting'
-                },
-                {
-                    id: 'bowling',
-                    name: 'Bowling'
-                },
-                {
-                    id: 'fielding',
-                    name: 'Fielding'
-                }
-            ]
-        },
-        gameType: {
-            displayName: 'Game Type',
-            type: FILTER_TYPE.CHECKBOX,
-            values: [
-                {
-                    id: '1',
-                    name: 'ODI'
-                },
-                {
-                    id: '2',
-                    name: 'TEST'
-                },
-                {
-                    id: '3',
-                    name: 'T20'
-                }
-            ]
-        },
-        teamType: {
-            displayName: 'Team Type',
-            type: FILTER_TYPE.CHECKBOX,
-            values: [
-                {
-                    id: '1',
-                    name: 'INTERNATIONAL'
-                },
-                {
-                    id: '2',
-                    name: 'DOMESTIC'
-                },
-                {
-                    id: '3',
-                    name: 'FRANCHISE'
-                }
-            ]
-        },
-        year: {
-            displayName: 'Year',
-            type: FILTER_TYPE.RANGE
-        }
-    });
-
-    onMount(async () => {
+    onMount(() => {
         Promise.all([
             updateData(1, sortMap()),
             getAllTeams(),
@@ -323,14 +324,6 @@ export default function PlayerStats() {
         });
     };
 
-    const goToPage = page => {
-        updateData(page, sortMap());
-    };
-
-    const [ filterOptions, setFilterOptions ] = createSignal(getDefaultFilterOptions());
-    const [ isFilterOpen, setIsFilterOpen ] = createSignal(false);
-    const [ loaded, setLoaded ] = createSignal(false);
-
     const handleFilterOpen = () => {
         setIsFilterOpen(true);
         setSelectedFiltersTemp(selectedFilters());
@@ -340,22 +333,8 @@ export default function PlayerStats() {
         setIsFilterOpen(false);
     };
 
-    const getSortSymbol = (key) => {
-        return (sortMap()[key] === 'asc') ? '\u0020\u2191' : '\u0020\u2193';
-    };
-
-    const isSortActive = (key) => {
-        return sortMap().hasOwnProperty(key);
-    };
-
-    const handleSort = (key, type) => {
-        const columnConfig = columns[type].filter(column => key === column.key);
-        if (columnConfig.length === 1 && columnConfig[0].sortable) {
-            const order = ((sortMap().hasOwnProperty(key) && sortMap()[key] === 'desc') ? 'asc' : 'desc');
-            updateData(1, {
-                [key]: order
-            });
-        }
+    const handleApplyFilters = () => {
+        updateData(1, sortMap());
     };
 
     const handleFilterEvent = event => {
@@ -406,10 +385,6 @@ export default function PlayerStats() {
         setSelectedFiltersTemp(tempFilters);
     };
 
-    const handleApplyFilters = () => {
-        updateData(1, sortMap());
-    };
-
     const handleClearFilter = key => {
         let tempFilters = copyObject(selectedFiltersTemp());
 
@@ -430,41 +405,30 @@ export default function PlayerStats() {
         setSelectedFiltersTemp(tempFilters);
     };
 
+    const goToPage = page => {
+        updateData(page, sortMap());
+    };
+
+    const handleSort = (key, type) => {
+        const columnConfig = columns[type].filter(column => key === column.key);
+        if (columnConfig.length === 1 && columnConfig[0].sortable) {
+            const order = ((sortMap().hasOwnProperty(key) && sortMap()[key] === 'desc') ? 'asc' : 'desc');
+            updateData(1, {
+                [key]: order
+            });
+        }
+    };
+
     return (
         <>
             <Show when={loaded()}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            {columns[selectedFilters().type].map(column => (
-                                <TableCell
-                                    sx={{'fontWeight': '600'}}
-                                    classList={{
-                                    'sortable': column.sortable
-                                    }}
-                                    onClick={() => handleSort(column.key, selectedFilters().type)}
-                                >
-                                    {column.displayKey}
-                                    <Show when={isSortActive(column.key)}>
-                                        {getSortSymbol(column.key)}
-                                    </Show>
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {stats().map(stat => (
-                            <TableRow>
-                                {columns[selectedFilters().type].map(column => (
-                                    <TableCell>
-                                        {stat[column.key]}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                <StatsTable
+                    columns={columns}
+                    selectedFilters={selectedFilters}
+                    stats={stats}
+                    sortMap={sortMap}
+                    handleSort={handleSort}
+                />
 
                 <PaginationBox
                     page={page}
