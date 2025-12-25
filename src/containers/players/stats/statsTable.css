@@ -1,0 +1,8 @@
+.sortable {
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+    color: #42a5f5 !important;
+}
