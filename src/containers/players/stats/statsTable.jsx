@@ -17,6 +17,10 @@ export default function StatsTable(props) {
         return sortMap().hasOwnProperty(key);
     };
 
+    const handleValueClick = (key, id) => {
+        props.onValueClick && props.onValueClick(key, id);
+    };
+
     return (
         <Table>
             <TableHead>
@@ -42,7 +46,12 @@ export default function StatsTable(props) {
                 {stats().map(stat => (
                     <TableRow>
                         {columns[selectedFilters().type].map(column => (
-                            <TableCell>
+                            <TableCell
+                                classList={{
+                                    'clickable': column.clickable
+                                }}
+                                onClick={() => handleValueClick(column.key, stat.id)}
+                            >
                                 {stat[column.key]}
                             </TableCell>
                         ))}
