@@ -3,5 +3,8 @@ export PATH=
 
 export VITE_HOST=
 export VITE_PORT=
+export ALLOWED_HOSTS=
 
 export VITE_API_ENDPOINT=
+
+export PORT=
