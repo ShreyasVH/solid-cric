@@ -9,14 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@solidjs/router": "^0.9.1",
-    "@suid/icons-material": "^0.6.11",
-    "@suid/material": "^0.15.1",
-    "axios": "^1.6.2",
-    "solid-js": "^1.8.5"
+    "@solidjs/router": "^0.15.4",
+    "@suid/icons-material": "^0.9.0",
+    "@suid/material": "^0.19.0",
+    "axios": "^1.13.2",
+    "solid-js": "^1.9.10"
   },
   "devDependencies": {
-    "vite": "^5.0.0",
-    "vite-plugin-solid": "^2.7.2"
+    "vite": "^7.3.1",
+    "vite-plugin-solid": "^2.11.10"
   }
 }

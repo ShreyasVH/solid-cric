@@ -7,7 +7,8 @@ export default defineConfig(({ mode }) => {
     plugins: [solid()],
     server: {
       host: process.env.VITE_HOST,
-      port: process.env.VITE_PORT
+      port: process.env.VITE_PORT,
+      allowedHosts: [process.env.ALLOWED_HOSTS]
     }
   }
 })
