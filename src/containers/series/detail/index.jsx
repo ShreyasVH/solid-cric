@@ -1,6 +1,6 @@
 import { createSignal, onMount, For } from "solid-js";
 import { Typography, CardActionArea, CardContent, Card, Grid, Button } from "@suid/material";
-import { formatDateTimeString, copyObject } from '../../../utils';
+import { formatDateTimeString, copyObject, showLoader, hideLoader } from '../../../utils';
 import { getSeries } from '../../../endpoints/series';
 import { removeMatch } from '../../../endpoints/matches';
 import { useNavigate, useSearchParams } from "@solidjs/router";
@@ -27,6 +27,7 @@ export default function TourDetails() {
     const handleDeleteMatchClick = async (matchId, event) => {
         event.preventDefault();
         event.stopPropagation();
+        showLoader();
         const deleteResponse = await removeMatch(matchId);
         if (deleteResponse.status === 200) {
             const updatedSeries = copyObject(series());
@@ -36,6 +37,7 @@ export default function TourDetails() {
         } else {
             // TODO: add failure alert snackbar
         }
+        hideLoader();
     };
 
     const renderStadiumDetails = stadium => {
