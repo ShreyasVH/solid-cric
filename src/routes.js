@@ -3,6 +3,7 @@ import TourDetails from './containers/tours/details';
 import SeriesDetail from './containers/series/detail';
 import MatchDetail from './containers/matches/detail';
 import PlayerStats from './containers/players/stats';
+import PlayerDetails from './containers/players/details';
 
 const routes = [
     {
@@ -28,6 +29,10 @@ const routes = [
     {
         path: '/players/stats',
         component: PlayerStats
+    },
+    {
+        path: '/players/details',
+        component: PlayerDetails
     }
 ];
 
