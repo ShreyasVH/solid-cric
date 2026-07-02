@@ -2,6 +2,19 @@ import { Box, Grid, Typography, CardActionArea, CardContent, Card, Button } from
 import { createSignal, onMount, For } from 'solid-js';
 import { getDetails } from '../../../endpoints/players';
 
+import { Doughnut } from 'solid-chartjs'
+import {
+    Chart as ChartJS,
+    ArcElement,
+    CategoryScale,
+    LinearScale,
+    Title,
+    Tooltip,
+    Legend,
+} from "chart.js";
+
+ChartJS.register(ArcElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
+
 export default function PlayerDetails() {
     const [ details, setDetails ] = createSignal({});
     const [ loaded, setLoaded ] = createSignal(false);
@@ -101,6 +114,65 @@ export default function PlayerDetails() {
         return ("0" + dateOfBirth.getDate()).slice(-2) + '/' + ("0" + (dateOfBirth.getMonth() + 1)).slice(-2) + '/' + dateOfBirth.getFullYear();
     };
 
+    const formatDismissalStatsForRender = (stats) => {
+        const colorMap = {
+            Bowled: {
+                backgroundColor: '#a6cee3'
+            },
+            Caught: {
+                backgroundColor: '#1f78b4'
+            },
+            LBW: {
+                backgroundColor: '#b2df8a'
+            },
+            'Run Out': {
+                backgroundColor: '#33a02c'
+            },
+            Stumped: {
+                backgroundColor: '#fb9a99'
+            },
+            'Hit Twice': {
+                backgroundColor: '#e31a1c'
+            },
+            'Hit Wicket': {
+                backgroundColor: '#fdbf6f'
+            },
+            'Obstructing the Field': {
+                backgroundColor: '#ff7f00'
+            },
+            'Timed Out': {
+                backgroundColor: '#cab2d6'
+            },
+            'Handled the Ball': {
+                backgroundColor: '#6a3d9a'
+            }
+        };
+
+        let labels = [];
+        let data = [];
+        let backgroundColors = [];
+        let hoverBackgroundColors = [];
+        for (const [dismissal, count] of Object.entries(stats)) {
+            labels.push(dismissal);
+            data.push(count);
+            backgroundColors.push(colorMap[dismissal].backgroundColor);
+            hoverBackgroundColors.push(colorMap[dismissal].hoverBackgroundColor);
+        }
+
+        return (
+            {
+                labels,
+                datasets: [
+                    {
+                        backgroundColor: backgroundColors,
+                        hoverBackgroundColor: hoverBackgroundColors,
+                        data
+                    }
+                ]
+            }
+        );
+    }
+
     onMount(async () => {
         const detailsResponse = await getDetails(id);
         console.log(detailsResponse);
@@ -173,6 +245,43 @@ export default function PlayerDetails() {
                                         </Typography>
                                     </CardContent>
                                 </Card>
+                            </Grid>
+                        }
+                        </For>
+                    </Grid>
+
+                    <br />
+                    <hr />
+                    <br />
+
+                    <h2>Dismissal Stats</h2>
+
+                    <Grid container>
+                        <For each={Object.keys(details().dismissalStats)}>{ gameType =>
+                            <Grid item xs={4}>
+                                <Doughnut
+                                    data={formatDismissalStatsForRender(details().dismissalStats[gameType])}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            title: {
+                                                display: true,
+                                                text: gameType,
+                                                font: {
+                                                    size: 18,
+                                                    weight: 'bold',
+                                                }
+                                            },
+                                            legend: {
+                                                display: true,
+                                                position: 'bottom'
+                                            }
+                                        }
+                                    }}
+                                    width={400}
+                                    height={400}
+                                />
                             </Grid>
                         }
                         </For>
