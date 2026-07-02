@@ -7,8 +7,11 @@ import { getAllStadiums } from '../../../endpoints/stadiums';
 import { copyObject, showLoader, hideLoader } from '../../../utils';
 import PaginationBox from './paginationBox';
 import StatsTable from './statsTable';
+import { useNavigate } from "@solidjs/router";
 
 export default function PlayerStats() {
+    const navigate = useNavigate();
+
     const getDefaultFilterOptions = () => ({
         type: {
             displayName: 'Type',
@@ -395,7 +398,7 @@ export default function PlayerStats() {
     };
 
     const handlePlayerClick = playerId => {
-        console.log(playerId);
+        navigate('/players/details?id=' + playerId);
     }
 
     const handleValueClick = (key, id) => {

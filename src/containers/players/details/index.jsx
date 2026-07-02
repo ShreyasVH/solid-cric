@@ -1,6 +1,7 @@
-import { Box, Grid, Typography, CardActionArea, CardContent, Card, Button } from '@suid/material';
+import { Grid, Typography, CardContent, Card } from '@suid/material';
 import { createSignal, onMount, For } from 'solid-js';
 import { getDetails } from '../../../endpoints/players';
+import { useSearchParams } from '@solidjs/router';
 
 import { Doughnut } from 'solid-chartjs'
 import {
@@ -19,8 +20,7 @@ export default function PlayerDetails() {
     const [ details, setDetails ] = createSignal({});
     const [ loaded, setLoaded ] = createSignal(false);
 
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const id = urlSearchParams.get('id');
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const column1Fields = [
         {
@@ -174,6 +174,8 @@ export default function PlayerDetails() {
     }
 
     onMount(async () => {
+        const id = searchParams.id;
+
         const detailsResponse = await getDetails(id);
         console.log(detailsResponse);
         setDetails(detailsResponse.data.data);

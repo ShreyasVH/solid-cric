@@ -23,7 +23,7 @@ export default function TourDetails() {
     };
 
     const handlePlayerClick = (playerId, event) => {
-        console.log(playerId);
+        navigate('/players/details?id=' + playerId);
     }
 
     const renderSeriesName = () => {
