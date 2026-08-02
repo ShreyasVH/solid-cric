@@ -6,3 +6,4 @@ npmInstall.log
 compile.log
 server.log
 dist/
+ncuLog.txt
