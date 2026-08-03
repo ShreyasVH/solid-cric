@@ -4,6 +4,7 @@ import { FILTER_TYPE } from '../../../constants';
 import { getStats } from '../../../endpoints/players';
 import { getAllTeams } from '../../../endpoints/teams';
 import { getAllStadiums } from '../../../endpoints/stadiums';
+import { getAllTags } from '../../../endpoints/tags';
 import { copyObject, showLoader, hideLoader } from '../../../utils';
 import PaginationBox from './paginationBox';
 import StatsTable from './statsTable';
@@ -221,8 +222,9 @@ export default function PlayerStats() {
         Promise.all([
             updateData(1, sortMap()),
             getAllTeams(),
-            getAllStadiums()
-        ]).then(([_, allTeams, allStadiums]) => {
+            getAllStadiums(),
+            getAllTags()
+        ]).then(([_, allTeams, allStadiums, allTags]) => {
             const updatedFilterOptions = copyObject(filterOptions());
 
             updatedFilterOptions['team'] = {
@@ -249,6 +251,15 @@ export default function PlayerStats() {
                 values: allStadiums.map(stadium => ({
                     id: JSON.stringify(stadium.id),
                     name: stadium.name
+                }))
+            };
+
+            updatedFilterOptions['seriesTags'] = {
+                displayName: 'Series Tags',
+                type: FILTER_TYPE.CHECKBOX,
+                values: allTags.filter(tag => tag.type === 'SERIES').map(tag => ({
+                    id: tag.id,
+                    name: tag.name
                 }))
             };
 
