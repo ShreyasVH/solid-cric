@@ -1,5 +1,5 @@
 import { Grid, Typography, CardContent, Card } from '@suid/material';
-import { createSignal, onMount, For } from 'solid-js';
+import { createSignal, createEffect, For } from 'solid-js';
 import { getDetails } from '../../../endpoints/players';
 import { useSearchParams } from '@solidjs/router';
 
@@ -173,7 +173,7 @@ export default function PlayerDetails() {
         );
     }
 
-    onMount(async () => {
+    createEffect(async () => {
         const id = searchParams.id;
 
         const detailsResponse = await getDetails(id);
