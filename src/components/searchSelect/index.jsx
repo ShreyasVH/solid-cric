@@ -26,6 +26,9 @@ export default function SearchSelect(props) {
         if (value.length >= 2) {
             setOptions(await searchItems(value));
             setOpen(true);
+        } else {
+            setOpen(false);
+            setOptions([]);
         }
         setKeyword(value);
     };

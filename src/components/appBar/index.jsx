@@ -37,15 +37,35 @@ function AppBarComponent() {
                             sx={{
                                 ml: "auto",
 
-                                "& .MuiOutlinedInput-root": {
+                                "& label.MuiInputLabel-root": {
+                                    color: "rgba(255, 255, 255, 0.38)"
+                                },
+                                "& .Mui-focused": {
+                                    "& fieldset.MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "rgba(255, 255, 255, 0.38) !important",
+                                    },
                                     "& input::placeholder": {
-                                        color: "white",
+                                        color: "red !important",
                                         opacity: 1
                                     },
-                                    "& fieldset": {
-                                        borderColor: "white",
+                                    color: "red",
+                                    "& input": {
+                                        color: "rgba(255, 255, 255, 0.38)"
+                                    }
+                                },
+                                "& label.Mui-focused": {
+                                    color: "rgba(255, 255, 255, 0.38)"
+                                },
+                                "& .MuiOutlinedInput-root": {
+                                    "& .MuiOutlinedInput-input": {
+                                        color: "rgba(255, 255, 255, 0.38)"
                                     },
-                                    color: "white",
+                                    "& fieldset.MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "rgba(255, 255, 255, 0.38)",
+                                    },
+                                    "&:hover fieldset.MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "rgba(255, 255, 255, 0.38)"
+                                    }
                                 }
                             }}
                         >
