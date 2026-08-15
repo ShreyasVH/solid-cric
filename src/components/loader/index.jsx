@@ -16,10 +16,14 @@ export default function LoaderComponent () {
         <div>
             {
                 visible() && <div>
-                    <Dialog open={true} sx={{ "& .MuiDialog-paper": {
+                    <Dialog open={true} PaperProps={{
+                        sx: {
                             backgroundColor: "transparent",
-                            boxShadow: "none"
-                        } }}>
+                            backgroundImage: "none",
+                            boxShadow: "none",
+                            overflow: "visible"
+                        }
+                    }}>
                         <CircularProgress />
                     </Dialog>
                 </div>
