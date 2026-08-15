@@ -1,7 +1,6 @@
 /* @refresh reload */
 import { render } from 'solid-js/web'
-import { ThemeProvider } from "@suid/material/styles";
-import themes from './themes';
+import ThemeWrapper from "./ThemeWrapper.jsx";
 import './index.css';
 
 import App from './App'
@@ -10,7 +9,7 @@ import App from './App'
 const root = document.getElementById('root')
 
 render(() => (
-    <ThemeProvider theme={themes}>
+    <ThemeWrapper>
         <App />
-    </ThemeProvider>
+    </ThemeWrapper>
 ), root)
