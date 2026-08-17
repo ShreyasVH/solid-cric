@@ -1,4 +1,6 @@
 import MenuIcon from "@suid/icons-material/Menu";
+import HomeIcon from "@suid/icons-material/Home";
+import BarChartIcon from "@suid/icons-material/BarChart";
 import {
     AppBar,
     Box,
@@ -6,12 +8,25 @@ import {
     IconButton,
     Toolbar,
     Typography,
+    Drawer,
+    List,
+    ListItemButton,
+    ListItem,
+    ListItemText,
+    ListItemIcon,
 } from "@suid/material";
-import { useNavigate } from '@solidjs/router';
+import { useNavigate, A } from '@solidjs/router';
 import SearchSelect from '../searchSelect';
 import ThemeSelector from '../themeSelector';
+import { createSignal } from "solid-js";
 
 function AppBarComponent() {
+    const [ open, setOpen ] = createSignal(false);
+
+    const toggleDrawer = () => setOpen(!open())
+
+    const closeDrawer = () => setOpen(false)
+
     const navigate = useNavigate();
 
     const handlePlayerSelect = (event, item) => {
@@ -30,6 +45,7 @@ function AppBarComponent() {
                             color="inherit"
                             aria-label="menu"
                             sx={{ mr: 2 }}
+                            onClick={toggleDrawer}
                         >
                             <MenuIcon />
                         </IconButton>
@@ -80,6 +96,29 @@ function AppBarComponent() {
                         </Box>
                     </Toolbar>
                 </AppBar>
+
+                <Drawer open={open()} onClose={closeDrawer}>
+                    <List sx={{width: 256}}>
+                            <ListItem>
+                                <ListItemButton component={A} href={'/'} onClick={closeDrawer}>
+                                    <ListItemIcon>
+                                        <HomeIcon />
+                                    </ListItemIcon>
+                                    <ListItemText>Home</ListItemText>
+                                </ListItemButton>
+                            </ListItem>
+
+
+                        <ListItem>
+                            <ListItemButton component={A} href={'/players/stats'} onClick={closeDrawer}>
+                                <ListItemIcon>
+                                    <BarChartIcon />
+                                </ListItemIcon>
+                                <ListItemText>Players Stats</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </Drawer>
             </Box>
         </>
     )
