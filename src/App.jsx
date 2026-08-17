@@ -1,5 +1,3 @@
-import AppBar from './components/appBar'
-import Loader from './components/loader';
 import { Router, Route } from "@solidjs/router";
 import routes from './routes';
 import rootLayout from './rootLayout.jsx';
