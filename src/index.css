@@ -23,3 +23,15 @@ body {
     margin-top: 1%;
     margin-bottom: 1%;
 }
+
+[data-theme="dark"] .man-of-the-match {
+    color: #E0AA3E !important;
+    border-color: #E0AA3E !important;
+    background-color: transparent !important;
+}
+
+[data-theme="light"] .man-of-the-match {
+    background-color: #E0AA3E !important;
+    border-color: #E0AA3E !important;
+    color: white !important;
+}

@@ -9,6 +9,7 @@ import {
 } from "@suid/material";
 import { useNavigate } from '@solidjs/router';
 import SearchSelect from '../searchSelect';
+import ThemeSelector from '../themeSelector';
 
 function AppBarComponent() {
     const navigate = useNavigate();
@@ -36,6 +37,8 @@ function AppBarComponent() {
                         <Box
                             sx={{
                                 ml: "auto",
+                                display: "flex",
+                                alignItems: "center",
 
                                 "& label.MuiInputLabel-root": {
                                     color: "rgba(255, 255, 255, 0.38)"
@@ -70,6 +73,10 @@ function AppBarComponent() {
                             }}
                         >
                             <SearchSelect onSelect={handlePlayerSelect} />
+
+                            &nbsp;&nbsp;
+
+                            <ThemeSelector />
                         </Box>
                     </Toolbar>
                 </AppBar>
