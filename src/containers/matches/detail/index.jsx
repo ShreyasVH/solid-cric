@@ -288,7 +288,7 @@ export default function TourDetails() {
                     return (
                         <span>
                             b&nbsp;
-                            <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
+                            <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
                                 {score.bowler.name}
                             </Typography>
                         </span>
@@ -299,7 +299,7 @@ export default function TourDetails() {
                     ];
                     for (const fielder of score.fielders) {
                         text.push(
-                            <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, fielder.id]} key={'score_ro_' + fielder.id}>
+                            <Typography class="link" variant={'span'} onClick={[handlePlayerClick, fielder.id]} key={'score_ro_' + fielder.id}>
                                 {fielder.name}
                             </Typography>
                         );
@@ -313,7 +313,7 @@ export default function TourDetails() {
                         return (
                             <span>
                                 c & b&nbsp;
-                                <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
+                                <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
                                     {score.bowler.name}
                                 </Typography>
                             </span>
@@ -322,11 +322,11 @@ export default function TourDetails() {
                         return (
                             <span>
                                 c&nbsp;
-                                <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.fielders[0].id]}>
+                                <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.fielders[0].id]}>
                                     {score.fielders[0].name}
                                 </Typography>
                                 &nbsp;b&nbsp;
-                                <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
+                                <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
                                     {score.bowler.name}
                                 </Typography>
                             </span>
@@ -336,11 +336,11 @@ export default function TourDetails() {
                     return (
                         <span>
                             st&nbsp;
-                            <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.fielders[0].id]}>
+                            <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.fielders[0].id]}>
                                 {score.fielders[0].name}
                             </Typography>
                             &nbsp;b&nbsp;
-                            <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
+                            <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
                                 {score.bowler.name}
                             </Typography>
                         </span>
@@ -349,7 +349,7 @@ export default function TourDetails() {
                     return (
                         <span>
                             lbw&nbsp;
-                            <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
+                            <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
                                 {score.bowler.name}
                             </Typography>
                         </span>
@@ -362,7 +362,7 @@ export default function TourDetails() {
                     return (
                         <span>
                             Hit Wicket b&nbsp;
-                            <Typography className={'link'} variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
+                            <Typography class="link" variant={'span'} onClick={[handlePlayerClick, score.bowler.id]}>
                                 {score.bowler.name}
                             </Typography>
                         </span>
@@ -486,7 +486,7 @@ export default function TourDetails() {
                         hover
                     >
                         <TableCell align={'center'}>
-                            <Typography variant={'span'} className={'link'} onClick={[handlePlayerClick, score.player.id]}>
+                            <Typography variant={'span'} class="link" onClick={[handlePlayerClick, score.player.id]}>
                                 {score.player.name}
                             </Typography>
                         </TableCell>
@@ -555,7 +555,7 @@ export default function TourDetails() {
                         hover
                     >
                         <TableCell align={'center'}>
-                            <Typography variant={'span'} className={'link'} onClick={[handlePlayerClick, score.player.id]}>
+                            <Typography variant={'span'} class="link" onClick={[handlePlayerClick, score.player.id]}>
                                 {score.player.name}
                             </Typography>
                         </TableCell>
@@ -600,6 +600,54 @@ export default function TourDetails() {
         }
     };
 
+    const renderPartnerships = innings => {
+        const partnerships = match().partnerships.filter(partnership => partnership.innings === innings);
+
+        return partnerships.length > 0 && <Paper>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell align={'center'}>Player 1</TableCell>
+                        <TableCell align={'center'}>Partnership</TableCell>
+                        <TableCell align={'center'}>Player 2</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <For each={partnerships}>
+                        {(partnership) => (
+                            <TableRow>
+                                <TableCell align={'center'}>
+                                    <Typography variant={'span'} class="link" onClick={[handlePlayerClick, partnership.player1.player.id]}>
+                                        {partnership.player1.player.name}
+                                    </Typography>
+                                    &nbsp;&nbsp;
+                                    <Typography variant={'span'}>
+                                        {partnership.player1.runs}({partnership.player1.balls})
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align={'center'}>
+                                    <Typography variant={'span'}>
+                                        {partnership.runs}{partnership.ended ? '' : '*'}({partnership.balls})
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align={'center'}>
+                                    <Typography variant={'span'} class="link" onClick={[handlePlayerClick, partnership.player2.player.id]}>
+                                        {partnership.player2.player.name}
+                                    </Typography>
+                                    &nbsp;&nbsp;
+                                    <Typography variant={'span'}>
+                                        {partnership.player2.runs}({partnership.player2.balls})
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        )
+                        }
+                    </For>
+                </TableBody>
+            </Table>
+        </Paper>
+    };
+
     const renderInnings = innings => {
         let totalInningsCount = 0;
 
@@ -619,6 +667,7 @@ export default function TourDetails() {
                     <div className={'container'}>
                         {renderBattingScores(innings)}
                         {renderBowlingFigures(innings)}
+                        {renderPartnerships(innings)}
                     </div>
                 </div>
             );
